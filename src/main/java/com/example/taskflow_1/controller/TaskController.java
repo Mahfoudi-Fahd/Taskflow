@@ -2,7 +2,9 @@ package com.example.taskflow_1.controller;
 
 import com.example.taskflow_1.domain.Task;
 import com.example.taskflow_1.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,8 +16,8 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping("/save")
-    public Task save(@RequestBody Task task) {
-        return taskService.save(task);
+    public ResponseEntity<Task> save(@Valid @RequestBody Task task) {
+        return ResponseEntity.ok(taskService.save(task));
     }
 
     @GetMapping("/all")
