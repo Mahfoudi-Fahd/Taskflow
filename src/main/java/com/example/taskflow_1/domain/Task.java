@@ -2,7 +2,9 @@ package com.example.taskflow_1.domain;
 
 import com.example.taskflow_1.domain.enums.TaskStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,16 +20,20 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "title most not be blank")
     private String title;
 
-    @NotBlank
+
     private String description;
+
 
     private LocalDateTime startDate;
 
+
     private LocalDateTime endDate;
+
 
     private TaskStatus taskStatus;
 
+    @ManyToOne
+    private User user;
 }

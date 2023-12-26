@@ -18,6 +18,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task save(Task task) {
+        if (taskRepository.existsByTitle(task.getTitle())) {
+            throw new IllegalArgumentException("A task with the same title already exists");
+        }
+
         return taskRepository.save(task);
     }
 
