@@ -2,9 +2,6 @@ package com.example.taskflow_1.domain;
 
 import com.example.taskflow_1.domain.enums.TaskStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;

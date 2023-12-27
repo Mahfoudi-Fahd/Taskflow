@@ -23,7 +23,7 @@ public class TaskController {
 
         Task task = taskRequestDto.toTask();
         taskService.save(task);
-TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
+        TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
 
         return ResponseMessage.created(taskResponseDto, "Task created successfully");
     }
@@ -32,4 +32,14 @@ TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
     public List<Task> findAll() {
         return taskService.findAll();
     }
+
+
+   @PutMapping("/assign/{taskId}/{userId}")
+    public ResponseEntity<ResponseMessage> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
+        Task task = taskService.assignTaskToUser(taskId, userId);
+        TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
+        return ResponseMessage.ok(taskResponseDto, "Task assigned successfully");
+    }
 }
+
+
