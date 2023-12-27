@@ -1,6 +1,7 @@
 package com.example.taskflow_1.dto.task;
 
 import com.example.taskflow_1.domain.Task;
+import com.example.taskflow_1.domain.User;
 import com.example.taskflow_1.domain.enums.TaskStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TaskRequestDto {
 
-    @NotBlank(message = "title most not be blank")
+    @NotBlank(message = "title is required")
     private String title;
 
     @NotBlank(message = "description is required")
@@ -35,6 +36,9 @@ public class TaskRequestDto {
     @NotNull(message = "taskStatus is required")
     private TaskStatus taskStatus;
 
+    @NotNull(message = "userId is required")
+    private Long userId;
+
 
 public Task toTask() {
     return Task.builder()
@@ -43,6 +47,7 @@ public Task toTask() {
             .startDate(startDate)
             .endDate(endDate)
             .taskStatus(taskStatus)
+            .user(User.builder().id(userId).build())
             .build();
 
     }
