@@ -1,5 +1,6 @@
 package com.example.taskflow_1.domain;
 
+import com.example.taskflow_1.domain.enums.UserRoles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -29,6 +30,8 @@ public class User {
     @NotNull(message = "password is required")
     @Min(value = 8, message = "password must be at least 8 characters")
     private String password;
+
+    private UserRoles role;
 
     @OneToMany(mappedBy = "user")
     private List<Task> task;
