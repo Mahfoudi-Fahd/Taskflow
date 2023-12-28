@@ -50,6 +50,16 @@ public class TaskController {
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
         return ResponseMessage.ok(taskResponseDto, "Task marked as done successfully");
     }
+
+    @PutMapping("/mark-as-in-progress/{taskId}")
+    public ResponseEntity<ResponseMessage> markTaskAsInProgress(@PathVariable Long taskId) {
+
+
+        Task selectedTask = taskService.findById(taskId);
+        Task task = taskService.markTaskAsInProgress(selectedTask);
+        TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
+        return ResponseMessage.ok(taskResponseDto, "Task marked as done successfully");
+    }
 }
 
 

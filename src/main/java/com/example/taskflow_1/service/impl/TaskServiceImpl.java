@@ -38,7 +38,9 @@ public class TaskServiceImpl implements TaskService {
         }
 
         List<Tag> tags = tagRepository.findAllById(tagIds);
-
+        if (tags.size() != tagIds.size()) {
+            throw new IllegalArgumentException("One or more tags do not exist");
+        }
         // Ensure all fetched tags are managed in the current persistence context
         List<Tag> managedTags = new ArrayList<>();
         for (Tag tag : tags) {
@@ -75,6 +77,20 @@ public class TaskServiceImpl implements TaskService {
         }
 
         task.setTaskStatus(TaskStatus.DONE);
+
+        taskRepository.save(task);
+
+        return task;
+    }
+
+    @Override
+    public Task markTaskAsInProgress(Task task) {
+
+        if (task.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("You cannot mark a task as In Progress after the end date");
+        }
+
+        task.setTaskStatus(TaskStatus.IN_PROGRESS);
 
         taskRepository.save(task);
 

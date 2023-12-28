@@ -15,5 +15,7 @@ public interface TaskService {
 
      Task markTaskAsDone(Task task);
 
+     Task markTaskAsInProgress(Task task);
+
      Task findById(Long taskId);
 }
