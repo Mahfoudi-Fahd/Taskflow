@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService {
         // Ensure all fetched tags are managed in the current persistence context
         List<Tag> managedTags = new ArrayList<>();
         for (Tag tag : tags) {
-                managedTags.add(tagRepository.getOne(tag.getId()));
+            managedTags.add(tagRepository.findById(tag.getId()).orElse(null));
         }
 
         task.setTags(managedTags); // Set the list of managed tags to the task
