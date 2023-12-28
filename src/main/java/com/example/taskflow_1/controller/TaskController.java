@@ -41,6 +41,15 @@ public class TaskController {
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
         return ResponseMessage.ok(taskResponseDto, "Task assigned successfully");
     }
+
+    @PutMapping("/mark-as-done/{taskId}")
+    public ResponseEntity<ResponseMessage> markTaskAsDone(@PathVariable Long taskId) {
+
+        Task selectedTask = taskService.findById(taskId);
+        Task task = taskService.markTaskAsDone(selectedTask);
+        TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
+        return ResponseMessage.ok(taskResponseDto, "Task marked as done successfully");
+    }
 }
 
 

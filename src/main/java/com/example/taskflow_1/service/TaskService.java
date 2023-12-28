@@ -12,4 +12,8 @@ public interface TaskService {
 
      List<Task> findAll();
      Task assignTaskToUser(Long taskId, Long userId);
+
+     Task markTaskAsDone(Task task);
+
+     Task findById(Long taskId);
 }

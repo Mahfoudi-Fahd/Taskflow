@@ -3,6 +3,7 @@ package com.example.taskflow_1.service.impl;
 import com.example.taskflow_1.domain.Tag;
 import com.example.taskflow_1.domain.Task;
 import com.example.taskflow_1.domain.User;
+import com.example.taskflow_1.domain.enums.TaskStatus;
 import com.example.taskflow_1.repository.TagRepository;
 import com.example.taskflow_1.repository.UserRepository;
 import com.example.taskflow_1.repository.TaskRepository;
@@ -41,10 +42,7 @@ public class TaskServiceImpl implements TaskService {
         // Ensure all fetched tags are managed in the current persistence context
         List<Tag> managedTags = new ArrayList<>();
         for (Tag tag : tags) {
-
                 managedTags.add(tagRepository.getOne(tag.getId()));
-
-
         }
 
         task.setTags(managedTags); // Set the list of managed tags to the task
@@ -69,5 +67,22 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(task);
     }
 
+    @Override
+    public Task markTaskAsDone(Task task) {
 
+        if (task.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("You cannot mark a task as done after the end date");
+        }
+
+        task.setTaskStatus(TaskStatus.DONE);
+
+        taskRepository.save(task);
+
+        return task;
+    }
+
+    @Override
+    public Task findById(Long taskId) {
+      return   taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    }
 }
