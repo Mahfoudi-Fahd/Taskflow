@@ -1,6 +1,7 @@
 package com.example.taskflow_1.service.impl;
 
 import com.example.taskflow_1.domain.User;
+import com.example.taskflow_1.domain.enums.UserRoles;
 import com.example.taskflow_1.repository.UserRepository;
 import com.example.taskflow_1.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,10 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByUsername(user.getUsername())){
             throw new IllegalArgumentException("A user with the same username already exists");
         }
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new IllegalArgumentException("A user with the same email already exists");
+        }
+        user.setRole(UserRoles.valueOf("USER"));
         return userRepository.save(user);
     }
 
