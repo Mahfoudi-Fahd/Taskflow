@@ -1,5 +1,6 @@
 package com.example.taskflow_1.dto.task;
 
+import com.example.taskflow_1.domain.Tag;
 import com.example.taskflow_1.domain.Task;
 import com.example.taskflow_1.domain.User;
 import com.example.taskflow_1.domain.enums.TaskStatus;
@@ -11,6 +12,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
 
 @Data
 @AllArgsConstructor
@@ -39,9 +44,11 @@ public class TaskRequestDto {
     @NotNull(message = "userId is required")
     private Long userId;
 
+    @NotNull(message = "tagIds Are required")
+    private List<Long> tagIds;
 
 public Task toTask() {
-    return Task.builder()
+    Task task = Task.builder()
             .title(title)
             .description(description)
             .startDate(startDate)
@@ -49,6 +56,13 @@ public Task toTask() {
             .taskStatus(taskStatus)
             .user(User.builder().id(userId).build())
             .build();
+
+    List<Tag> tags = tagIds.stream()
+            .map(tagId -> Tag.builder().id(tagId).build())
+            .collect(Collectors.toList());
+
+    task.setTags(tags);
+    return task;
 
     }
 }

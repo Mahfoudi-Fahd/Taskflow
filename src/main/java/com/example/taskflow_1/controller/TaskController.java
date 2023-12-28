@@ -18,15 +18,16 @@ import java.util.List;
 public class TaskController {
     private final TaskService taskService;
 
-    @PostMapping("/save")
-    public ResponseEntity<ResponseMessage> save(@Valid @RequestBody TaskRequestDto taskRequestDto) {
+    @PostMapping("/save-with-tags")
+    public ResponseEntity<ResponseMessage> saveWithTags(@Valid @RequestBody TaskRequestDto taskRequestDto) {
 
         Task task = taskRequestDto.toTask();
-        taskService.save(task);
+        taskService.createTaskWithTags(task, taskRequestDto.getTagIds());
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
 
         return ResponseMessage.created(taskResponseDto, "Task created successfully");
     }
+
 
     @GetMapping("/all")
     public List<Task> findAll() {

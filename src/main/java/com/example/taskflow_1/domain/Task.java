@@ -1,10 +1,12 @@
 package com.example.taskflow_1.domain;
 
 import com.example.taskflow_1.domain.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,4 +35,12 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "task_tag",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
+
+
 }

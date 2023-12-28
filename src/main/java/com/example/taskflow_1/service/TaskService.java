@@ -7,7 +7,9 @@ import java.util.List;
 
 @Service
 public interface TaskService {
-     Task save(Task task);
+
+     Task createTaskWithTags(Task task, List<Long> tagIds);
+
      List<Task> findAll();
      Task assignTaskToUser(Long taskId, Long userId);
 }
