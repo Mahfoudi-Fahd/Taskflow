@@ -1,7 +1,6 @@
 package com.example.taskflow_1.domain;
 
 import com.example.taskflow_1.domain.enums.TaskStatus;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +31,11 @@ public class Task {
 
 
     private TaskStatus taskStatus;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

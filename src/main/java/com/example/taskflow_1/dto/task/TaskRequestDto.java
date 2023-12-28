@@ -13,7 +13,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 
 
@@ -47,6 +47,9 @@ public class TaskRequestDto {
     @NotNull(message = "tagIds Are required")
     private List<Long> tagIds;
 
+    @NotNull(message = "createdBy is required")
+    private Long createdBy;
+
 public Task toTask() {
     Task task = Task.builder()
             .title(title)
@@ -55,11 +58,12 @@ public Task toTask() {
             .endDate(endDate)
             .taskStatus(taskStatus)
             .user(User.builder().id(userId).build())
+            .createdBy(User.builder().id(createdBy).build())
             .build();
 
     List<Tag> tags = tagIds.stream()
             .map(tagId -> Tag.builder().id(tagId).build())
-            .collect(Collectors.toList());
+        .toList() ;
 
     task.setTags(tags);
     return task;
