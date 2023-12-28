@@ -7,6 +7,8 @@ import com.example.taskflow_1.response.ResponseMessage;
 import com.example.taskflow_1.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +21,12 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping("/save-with-tags")
-    public ResponseEntity<ResponseMessage> saveWithTags(@Valid @RequestBody TaskRequestDto taskRequestDto) {
+    public ResponseEntity<TaskResponseDto>saveWithTags(@Valid @RequestBody TaskRequestDto taskRequestDto) {
 
-        Task task = taskRequestDto.toTask();
-        taskService.createTaskWithTags(task, taskRequestDto.getTagIds());
+        Task task =   taskService.createTaskWithTags(taskRequestDto.toTask(), taskRequestDto.getTagIds());
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
 
-        return ResponseMessage.created(taskResponseDto, "Task created successfully");
+        return new ResponseEntity<>(taskResponseDto, HttpStatus.CREATED);
     }
 
 
@@ -58,7 +59,7 @@ public class TaskController {
         Task selectedTask = taskService.findById(taskId);
         Task task = taskService.markTaskAsInProgress(selectedTask);
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
-        return ResponseMessage.ok(taskResponseDto, "Task marked as done successfully");
+        return ResponseMessage.ok(taskResponseDto, "Task marked as In Progress successfully");
     }
 }
 
