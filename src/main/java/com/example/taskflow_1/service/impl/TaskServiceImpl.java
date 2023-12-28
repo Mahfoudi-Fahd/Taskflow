@@ -92,9 +92,7 @@ public class TaskServiceImpl implements TaskService {
 
         task.setTaskStatus(TaskStatus.IN_PROGRESS);
 
-        taskRepository.save(task);
-
-        return task;
+        return taskRepository.save(task);
     }
 
     @Override
