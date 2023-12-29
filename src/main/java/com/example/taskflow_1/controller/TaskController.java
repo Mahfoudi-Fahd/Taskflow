@@ -36,9 +36,9 @@ public class TaskController {
     }
 
 
-   @PutMapping("/assign/{taskId}/{userId}")
-    public ResponseEntity<ResponseMessage> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
-        Task task = taskService.assignTaskToUser(taskId, userId);
+   @PutMapping("/assign/{taskId}/{userId}/{assignerId}")
+    public ResponseEntity<ResponseMessage> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId, @PathVariable Long assignerId) {
+        Task task = taskService.assignTaskToUser(taskId, userId, assignerId);
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
         return ResponseMessage.ok(taskResponseDto, "Task assigned successfully");
     }
