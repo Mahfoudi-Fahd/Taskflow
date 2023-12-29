@@ -11,7 +11,8 @@ public interface TaskService {
      Task createTaskWithTags(Task task, List<Long> tagIds);
 
      List<Task> findAll();
-     Task assignTaskToUser(Long taskId, Long userId);
+
+     Task assignTaskToUser(Long taskId, Long userId, Long assignerId);
 
      Task markTaskAsDone(Task task);
 

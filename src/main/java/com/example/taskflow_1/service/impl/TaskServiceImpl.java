@@ -4,6 +4,7 @@ import com.example.taskflow_1.domain.Tag;
 import com.example.taskflow_1.domain.Task;
 import com.example.taskflow_1.domain.User;
 import com.example.taskflow_1.domain.enums.TaskStatus;
+import com.example.taskflow_1.domain.enums.UserRoles;
 import com.example.taskflow_1.repository.TagRepository;
 import com.example.taskflow_1.repository.UserRepository;
 import com.example.taskflow_1.repository.TaskRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -59,12 +61,46 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public Task assignTaskToUser(Long taskId, Long userId) {
-            Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    public Task assignTaskToUser(Long taskId, Long userId, Long assignerId) {
+
+        User assigner = userRepository.findById(assignerId).orElseThrow(() -> new IllegalArgumentException("Assigner not found"));
+
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        task.setUser(user);
+        // Check if the task status is done
+        if (task.getTaskStatus() == TaskStatus.DONE) {
+            throw new IllegalArgumentException("You cannot assign a task that is already done");
+        }
+
+        //check if the task is passed the end date
+        if(task.getEndDate().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("You cannot assign a task that has passed the end date");
+        }
+
+        //check if the User is an admin
+        if (assigner.getRole() == UserRoles.ADMIN) {
+            task.setAssignedBy(assigner);
+            task.setUser(user);
+
+        //check if the User is a user
+        }else if (assigner.getRole() == UserRoles.USER) {
+
+            //check if the task is assigned to another user
+            if (task.getUser() != null) {
+                throw new IllegalArgumentException("You cannot assign a task that is already assigned to another user");
+            }
+
+            //check if the assigner is the same as the user
+            if (Objects.equals(assigner.getId(),user.getId())) {
+                task.setAssignedBy(assigner);
+                task.setUser(user);
+            }else {
+                throw new IllegalArgumentException("You cannot assign a task to another user");
+            }
+        }
+
 
         return taskRepository.save(task);
     }
