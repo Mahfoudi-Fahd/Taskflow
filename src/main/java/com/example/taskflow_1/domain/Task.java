@@ -29,13 +29,17 @@ public class Task {
 
     private LocalDateTime endDate;
 
-
+//    @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_by")
+    private User assignedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
