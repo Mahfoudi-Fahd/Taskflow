@@ -12,4 +12,5 @@ public interface UserService {
     List<User> findAll();
     void deleteById(Long id);
 
+    User findById(Long userId);
 }

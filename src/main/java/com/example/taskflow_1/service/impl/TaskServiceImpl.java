@@ -3,11 +3,13 @@ package com.example.taskflow_1.service.impl;
 import com.example.taskflow_1.domain.Tag;
 import com.example.taskflow_1.domain.Task;
 import com.example.taskflow_1.domain.User;
+import com.example.taskflow_1.domain.UserToken;
 import com.example.taskflow_1.domain.enums.TaskStatus;
 import com.example.taskflow_1.domain.enums.UserRoles;
 import com.example.taskflow_1.repository.TagRepository;
 import com.example.taskflow_1.repository.UserRepository;
 import com.example.taskflow_1.repository.TaskRepository;
+import com.example.taskflow_1.repository.UserTokenRepository;
 import com.example.taskflow_1.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final UserTokenRepository userTokenRepository;
 
 
     @Override
@@ -50,7 +53,8 @@ public class TaskServiceImpl implements TaskService {
         }
 
         task.setTags(managedTags); // Set the list of managed tags to the task
-
+        task.setIsReplaced(false);
+        task.setAssignedBy(task.getCreatedBy());
         return taskRepository.save(task);
     }
 
@@ -141,9 +145,20 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if(user.getRole() == UserRoles.USER && (!Objects.equals(task.getCreatedBy().getId(), user.getId()))) {
-                throw new IllegalArgumentException("You cannot delete a task that you did not create");
+        UserToken userToken = userTokenRepository.findByUser(user);
 
+        if (user.getRole() == UserRoles.USER) {
+            if (userToken.getMonthlyDeletionTokens() <= 0) {
+                throw new IllegalArgumentException("You do not have sufficient deletion tokens");
+            }
+
+            if (!Objects.equals(task.getCreatedBy().getId(), user.getId())) {
+                throw new IllegalArgumentException("You cannot delete a task that you did not create");
+            }
+
+            // Decrement deletion tokens for users with the USER role
+            userToken.setMonthlyDeletionTokens(userToken.getMonthlyDeletionTokens() - 1);
+            userRepository.save(user);
         }
 
         if (task.getTaskStatus() == TaskStatus.DONE) {
@@ -154,5 +169,33 @@ public class TaskServiceImpl implements TaskService {
         }
 
         taskRepository.deleteById(taskId);
+    }
+
+    @Override
+    public Task replaceTask(Long taskId, User currentUser) {
+    Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        if (task == null) {
+            throw new IllegalArgumentException("The specified task does not exist.");
+        }
+
+        assert task.getUser() != null;
+        if (!task.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You can only replace tasks assigned to you.");
+        }
+
+        UserToken userToken = userTokenRepository.findByUser(currentUser);
+        if (userToken == null || userToken.getDailyReplacementTokens() <= 0) {
+            throw new IllegalArgumentException("You don't have enough daily task replacement tokens.");
+        }
+
+        // Decrement the daily replacement tokens after successfully replacing the task
+        userToken.setDailyReplacementTokens(userToken.getDailyReplacementTokens() - 1);
+        userTokenRepository.save(userToken);
+
+        task.setIsReplaced(true);
+        task.setUser(null);
+        task.setAssignedBy(null);
+        task.setTaskStatus(TaskStatus.TODO);
+        return taskRepository.save(task);
     }
 }

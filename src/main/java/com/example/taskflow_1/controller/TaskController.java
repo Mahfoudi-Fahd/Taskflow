@@ -1,10 +1,12 @@
 package com.example.taskflow_1.controller;
 
 import com.example.taskflow_1.domain.Task;
+import com.example.taskflow_1.domain.User;
 import com.example.taskflow_1.dto.task.TaskRequestDto;
 import com.example.taskflow_1.dto.task.TaskResponseDto;
 import com.example.taskflow_1.response.ResponseMessage;
 import com.example.taskflow_1.service.TaskService;
+import com.example.taskflow_1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskController {
     private final TaskService taskService;
+    private final UserService userService;
 
     @PostMapping("/save-with-tags")
     public ResponseEntity<TaskResponseDto>saveWithTags(@Valid @RequestBody TaskRequestDto taskRequestDto) {
@@ -70,6 +73,17 @@ public class TaskController {
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(selectedTask);
 
         return ResponseMessage.ok(taskResponseDto,"Task deleted successfully");
+    }
+
+    @PostMapping("/{taskId}/replace")
+    public ResponseEntity<ResponseMessage> replaceTask(@PathVariable Long taskId, @RequestParam Long userId) {
+        // Retrieve the current user (userId)
+        User currentUser = userService.findById(userId);
+
+        Task replacedTask = taskService.replaceTask(taskId, currentUser);
+    TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(replacedTask);
+
+        return ResponseMessage.ok( taskResponseDto, "Task replaced successfully");
     }
 }
 

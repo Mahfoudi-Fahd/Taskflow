@@ -1,6 +1,7 @@
 package com.example.taskflow_1.service;
 
 import com.example.taskflow_1.domain.Task;
+import com.example.taskflow_1.domain.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface TaskService {
      Task findById(Long taskId);
 
      void  deleteById(Long taskId, Long userId);
+
+     Task replaceTask(Long taskId, User currentUser);
 }

@@ -41,9 +41,6 @@ public class TaskRequestDto {
     @NotNull(message = "taskStatus is required")
     private TaskStatus taskStatus;
 
-    @NotNull(message = "userId is required")
-    private Long userId;
-
     @NotNull(message = "tagIds Are required")
     private List<Long> tagIds;
 
@@ -57,7 +54,6 @@ public Task toTask() {
             .startDate(startDate)
             .endDate(endDate)
             .taskStatus(taskStatus)
-            .user(User.builder().id(userId).build())
             .createdBy(User.builder().id(createdBy).build())
             .build();
 

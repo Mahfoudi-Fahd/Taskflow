@@ -1,6 +1,8 @@
 package com.example.taskflow_1.domain;
 
 import com.example.taskflow_1.domain.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,15 +35,19 @@ public class Task {
     private TaskStatus taskStatus;
 
 
+    private Boolean isReplaced;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_by")
     private User assignedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Nullable
     private User user;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
