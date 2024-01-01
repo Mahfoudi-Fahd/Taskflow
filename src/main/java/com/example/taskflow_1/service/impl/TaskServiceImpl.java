@@ -35,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
         if (task.getStartDate().isAfter(task.getEndDate())) {
             throw new IllegalArgumentException("Start date cannot be after end date");
         }
-        if(task.getEndDate().isAfter(LocalDateTime.now().plusDays(3))){
+        if (task.getEndDate().isAfter(LocalDateTime.now().plusDays(3))) {
             throw new IllegalArgumentException("End date cannot be more than 3 days from now");
         }
 
@@ -75,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         //check if the task is passed the end date
-        if(task.getEndDate().isBefore(LocalDateTime.now())){
+        if (task.getEndDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("You cannot assign a task that has passed the end date");
         }
 
@@ -84,8 +84,8 @@ public class TaskServiceImpl implements TaskService {
             task.setAssignedBy(assigner);
             task.setUser(user);
 
-        //check if the User is a user
-        }else if (assigner.getRole() == UserRoles.USER) {
+            //check if the User is a user
+        } else if (assigner.getRole() == UserRoles.USER) {
 
             //check if the task is assigned to another user
             if (task.getUser() != null) {
@@ -93,10 +93,10 @@ public class TaskServiceImpl implements TaskService {
             }
 
             //check if the assigner is the same as the user
-            if (Objects.equals(assigner.getId(),user.getId())) {
+            if (Objects.equals(assigner.getId(), user.getId())) {
                 task.setAssignedBy(assigner);
                 task.setUser(user);
-            }else {
+            } else {
                 throw new IllegalArgumentException("You cannot assign a task to another user");
             }
         }
@@ -134,5 +134,25 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task findById(Long taskId) {
       return   taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    }
+
+    @Override
+    public void  deleteById(Long taskId, Long userId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if(user.getRole() == UserRoles.USER && (!Objects.equals(task.getCreatedBy().getId(), user.getId()))) {
+                throw new IllegalArgumentException("You cannot delete a task that you did not create");
+
+        }
+
+        if (task.getTaskStatus() == TaskStatus.DONE) {
+            throw new IllegalArgumentException("You cannot delete a task that is already done");
+        }
+        if (task.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("You cannot delete a task that has passed the end date");
+        }
+
+        taskRepository.deleteById(taskId);
     }
 }

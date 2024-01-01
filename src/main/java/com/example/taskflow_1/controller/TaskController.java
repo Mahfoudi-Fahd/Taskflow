@@ -61,6 +61,16 @@ public class TaskController {
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
         return ResponseMessage.ok(taskResponseDto, "Task marked as In Progress successfully");
     }
+
+    @DeleteMapping("/delete/{taskId}/{userId}")
+    public ResponseEntity<ResponseMessage> deleteById(@PathVariable Long taskId,@PathVariable Long userId) {
+
+        Task selectedTask = taskService.findById(taskId);
+        taskService.deleteById(selectedTask.getId(), userId);
+        TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(selectedTask);
+
+        return ResponseMessage.ok(taskResponseDto,"Task deleted successfully");
+    }
 }
 
 

@@ -19,4 +19,6 @@ public interface TaskService {
      Task markTaskAsInProgress(Task task);
 
      Task findById(Long taskId);
+
+     void  deleteById(Long taskId, Long userId);
 }
