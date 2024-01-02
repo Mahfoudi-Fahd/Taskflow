@@ -10,7 +10,6 @@ import com.example.taskflow_1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,7 @@ public class TaskController {
     @PostMapping("/save-with-tags")
     public ResponseEntity<TaskResponseDto>saveWithTags(@Valid @RequestBody TaskRequestDto taskRequestDto) {
 
-        Task task =   taskService.createTaskWithTags(taskRequestDto.toTask(), taskRequestDto.getTagIds());
+        Task task =   taskService.createTask(taskRequestDto.toTask(), taskRequestDto.getTagIds());
         TaskResponseDto taskResponseDto = TaskResponseDto.fromTask(task);
 
         return new ResponseEntity<>(taskResponseDto, HttpStatus.CREATED);

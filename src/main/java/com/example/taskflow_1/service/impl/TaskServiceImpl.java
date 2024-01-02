@@ -31,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public Task createTaskWithTags(Task task, List<Long> tagIds) {
+    public Task createTask(Task task, List<Long> tagIds) {
         if (taskRepository.existsByTitle(task.getTitle())) {
             throw new IllegalArgumentException("A task with the same title already exists");
         }

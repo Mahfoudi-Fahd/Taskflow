@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface TaskService {
 
-     Task createTaskWithTags(Task task, List<Long> tagIds);
+     Task createTask(Task task, List<Long> tagIds);
 
      List<Task> findAll();
 
